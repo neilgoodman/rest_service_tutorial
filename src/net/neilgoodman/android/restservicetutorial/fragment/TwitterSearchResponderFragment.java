@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.neilgoodman.android.restservicetutorial.RESTServiceActivity;
-import net.neilgoodman.android.restservicetutorial.api.TwitterAPI;
+import net.neilgoodman.android.restservicetutorial.service.RESTService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -39,9 +41,26 @@ public class TwitterSearchResponderFragment extends RESTResponderFragment {
         RESTServiceActivity activity = (RESTServiceActivity) getActivity();
         
         if (mTweets == null && activity != null) {
-            // This is where we make our REST call to the service. We pass it our ResultReceiver
+            // This is where we make our REST call to the service. We also pass in our ResultReceiver
             // defined in the RESTResponderFragment super class.
-            TwitterAPI.searchForAndroidTweets(activity, getResultReceiver());
+            
+            // We will explicitly call our Service since we probably want to keep it as a private
+            // component in our app. You could do this with Intent actions as well, but you have
+            // to make sure you define your intent filters correctly in your manifest.
+            Intent intent = new Intent(activity, RESTService.class);
+            intent.setData(Uri.parse("http://search.twitter.com/search.json"));
+            
+            // Here we are going to place our REST call parameters. Note that
+            // we could have just used Uri.Builder and appendQueryParameter()
+            // here, but I wanted to illustrate how to use the Bundle params.
+            Bundle params = new Bundle();
+            params.putString("q", "android");
+            
+            intent.putExtra(RESTService.EXTRA_PARAMS, params);
+            intent.putExtra(RESTService.EXTRA_RESULT_RECEIVER, getResultReceiver());
+            
+            // Here we send our Intent to our RESTService.
+            activity.startService(intent);
         }
         else if (activity != null) {
             // Here we check to see if our activity is null or not.
