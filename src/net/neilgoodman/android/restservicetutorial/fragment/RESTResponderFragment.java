@@ -11,7 +11,7 @@ public abstract class RESTResponderFragment extends Fragment {
     private ResultReceiver mReceiver;
     
     // We are going to use a constructor here to make our ResultReceiver,
-    // but be careful because Fragment are required to have only zero-arg
+    // but be careful because Fragments are required to have only zero-arg
     // constructors. Normally you don't want to use constructors at all
     // with Fragments.
     public RESTResponderFragment() {
